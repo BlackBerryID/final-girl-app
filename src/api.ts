@@ -1,8 +1,9 @@
 import type { Entry } from './types.ts'
 
 export type NewEntry = {
-  title: string
-  note: string
+  killer: string
+  location: string
+  featureFilm: string
 }
 
 async function readError(response: Response): Promise<string> {
@@ -13,12 +14,12 @@ async function readError(response: Response): Promise<string> {
     // The response body is not JSON.
   }
 
-  return 'Не удалось сохранить запись'
+  return 'Could not save the entry'
 }
 
 export async function fetchEntries(signal?: AbortSignal): Promise<Entry[]> {
   const response = await fetch('/api/entries', { signal })
-  if (!response.ok) throw new Error('Не удалось загрузить записи')
+  if (!response.ok) throw new Error('Could not load entries')
   return response.json() as Promise<Entry[]>
 }
 

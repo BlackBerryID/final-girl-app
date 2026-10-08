@@ -1,5 +1,10 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Connect, Plugin } from 'vite'
+import {
+  FEATURE_FILM_OPTIONS,
+  KILLERS,
+  LOCATIONS,
+} from '../src/data/featureFilms.ts'
 import { addEntry, listEntries } from './db.ts'
 
 const entriesPath = '/api/entries'
@@ -24,22 +29,27 @@ function readBody(request: IncomingMessage): Promise<string> {
   })
 }
 
-function parseNewEntry(value: unknown): { title: string; note: string } | null {
+function isListed(value: unknown, options: readonly string[]): value is string {
+  return typeof value === 'string' && options.some((option) => option === value)
+}
+
+function parseNewEntry(value: unknown): {
+  killer: string
+  location: string
+  featureFilm: string
+} | null {
   if (typeof value !== 'object' || value === null) return null
 
   const record = value as Record<string, unknown>
-  if (typeof record.title !== 'string') return null
+  if (!isListed(record.killer, KILLERS)) return null
+  if (!isListed(record.location, LOCATIONS)) return null
+  if (!isListed(record.featureFilm, FEATURE_FILM_OPTIONS)) return null
 
-  const title = record.title.trim()
-  if (title.length === 0 || title.length > 200) return null
-
-  const noteValue = record.note === undefined ? '' : record.note
-  if (typeof noteValue !== 'string') return null
-
-  const note = noteValue.trim()
-  if (note.length > 2000) return null
-
-  return { title, note }
+  return {
+    killer: record.killer,
+    location: record.location,
+    featureFilm: record.featureFilm,
+  }
 }
 
 async function handleApi(
@@ -60,14 +70,14 @@ async function handleApi(
     try {
       payload = JSON.parse(await readBody(request))
     } catch {
-      sendJson(response, 400, { error: 'Некорректный JSON' })
+      sendJson(response, 400, { error: 'Invalid JSON' })
       return true
     }
 
     const input = parseNewEntry(payload)
     if (!input) {
       sendJson(response, 400, {
-        error: 'Укажите название до 200 символов и заметку до 2000 символов',
+        error: 'Choose a killer, location, and feature film from the list',
       })
       return true
     }
@@ -77,7 +87,7 @@ async function handleApi(
   }
 
   response.setHeader('Allow', 'GET, POST')
-  sendJson(response, 405, { error: 'Метод не поддерживается' })
+  sendJson(response, 405, { error: 'Method not allowed' })
   return true
 }
 
@@ -90,7 +100,7 @@ function apiMiddleware(): Connect.NextHandleFunction {
       .catch((error: unknown) => {
         console.error(error)
         if (!response.headersSent) {
-          sendJson(response, 500, { error: 'Не удалось обработать запрос' })
+          sendJson(response, 500, { error: 'Could not handle the request' })
         }
       })
   }

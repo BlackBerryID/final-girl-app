@@ -41,13 +41,15 @@ export async function listEntries(): Promise<Entry[]> {
 }
 
 export async function addEntry(input: {
-  title: string
-  note: string
+  killer: string
+  location: string
+  featureFilm: string
 }): Promise<Entry> {
   const entry: Entry = {
     id: crypto.randomUUID(),
-    title: input.title,
-    note: input.note,
+    killer: input.killer,
+    location: input.location,
+    featureFilm: input.featureFilm,
     createdAt: new Date().toISOString(),
   }
 

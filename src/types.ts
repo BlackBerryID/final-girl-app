@@ -1,8 +1,11 @@
 export type Entry = {
   id: string
-  title: string
-  note: string
   createdAt: string
+  killer?: string
+  location?: string
+  featureFilm?: string
+  title?: string
+  note?: string
 }
 
 export type DatabaseData = {

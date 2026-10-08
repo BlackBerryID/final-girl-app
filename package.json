@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/core": "^9.7.1",
+    "@mantine/hooks": "^9.7.1",
     "@tailwindcss/vite": "^4.3.3",
     "lowdb": "^7.0.1",
     "react": "^19.2.8",
@@ -23,6 +25,9 @@
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
+    "postcss": "^8.5.29",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
   }
