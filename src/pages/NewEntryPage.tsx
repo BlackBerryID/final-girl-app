@@ -6,8 +6,8 @@ import {
   FEATURE_FILM_OPTIONS,
   KILLERS,
   LOCATIONS,
-  MIX_FEATURE_FILM,
   findFeatureFilm,
+  findFeatureFilmByPair,
 } from '../data/featureFilms.ts'
 
 export default function NewEntryPage() {
@@ -67,8 +67,9 @@ export default function NewEntryPage() {
             data={KILLERS}
             value={killer || null}
             onChange={(nextKiller) => {
-              setKiller(nextKiller ?? '')
-              setFeatureFilm(MIX_FEATURE_FILM)
+              const killerName = nextKiller ?? ''
+              setKiller(killerName)
+              setFeatureFilm(findFeatureFilmByPair(killerName, location)?.name ?? '')
             }}
             searchable
             nothingFoundMessage="Nothing found"
@@ -81,8 +82,9 @@ export default function NewEntryPage() {
             data={LOCATIONS}
             value={location || null}
             onChange={(nextLocation) => {
-              setLocation(nextLocation ?? '')
-              setFeatureFilm(MIX_FEATURE_FILM)
+              const locationName = nextLocation ?? ''
+              setLocation(locationName)
+              setFeatureFilm(findFeatureFilmByPair(killer, locationName)?.name ?? '')
             }}
             searchable
             nothingFoundMessage="Nothing found"

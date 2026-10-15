@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { fetchEntries } from '../api.ts'
+import { featureFilmImage, killerImage, locationImage } from '../data/portraits.ts'
 import type { Entry } from '../types.ts'
 
 function formatCreatedAt(value: string) {
@@ -8,6 +9,27 @@ function formatCreatedAt(value: string) {
     dateStyle: 'medium',
     timeStyle: 'short',
   })
+}
+
+function NamedPortrait({ name, image }: { name: string | undefined; image: string | undefined }) {
+  if (!name) return '—'
+
+  return (
+    <span className="flex items-center gap-2">
+      {image ? (
+        <span
+          aria-hidden
+          className="size-[calc(4rem/1.5)] shrink-0 rounded-full bg-no-repeat"
+          style={{
+            backgroundImage: `url(${image})`,
+            backgroundSize: '200% auto',
+            backgroundPosition: 'center top',
+          }}
+        />
+      ) : null}
+      <span className="text-base font-medium leading-tight">{name}</span>
+    </span>
+  )
 }
 
 export default function EntriesPage() {
@@ -56,9 +78,15 @@ export default function EntriesPage() {
           <tbody>
             {entries.map((entry) => (
               <tr key={entry.id} className="border-t border-zinc-600 bg-zinc-800/60">
-                <td className="px-4 py-3">{entry.featureFilm ?? '—'}</td>
-                <td className="px-4 py-3">{entry.killer ?? '—'}</td>
-                <td className="px-4 py-3">{entry.location ?? '—'}</td>
+                <td className="px-4 py-3">
+                  <NamedPortrait name={entry.featureFilm} image={featureFilmImage(entry.featureFilm)} />
+                </td>
+                <td className="px-4 py-3">
+                  <NamedPortrait name={entry.killer} image={killerImage(entry.killer)} />
+                </td>
+                <td className="px-4 py-3">
+                  <NamedPortrait name={entry.location} image={locationImage(entry.location)} />
+                </td>
                 <td className="px-4 py-3 text-zinc-300">{formatCreatedAt(entry.createdAt)}</td>
               </tr>
             ))}

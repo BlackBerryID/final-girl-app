@@ -55,7 +55,9 @@ export const FEATURE_FILMS = [
 
 export type FeatureFilm = (typeof FEATURE_FILMS)[number]
 
-export const KILLERS = FEATURE_FILMS.map((film) => film.killer)
+const EXTRA_KILLERS = ['Krampus'] as const
+
+export const KILLERS = [...FEATURE_FILMS.map((film) => film.killer), ...EXTRA_KILLERS]
 export const LOCATIONS = FEATURE_FILMS.map((film) => film.location)
 export const FEATURE_FILM_OPTIONS = [
   MIX_FEATURE_FILM,
@@ -64,4 +66,8 @@ export const FEATURE_FILM_OPTIONS = [
 
 export function findFeatureFilm(name: string): FeatureFilm | undefined {
   return FEATURE_FILMS.find((film) => film.name === name)
+}
+
+export function findFeatureFilmByPair(killer: string, location: string): FeatureFilm | undefined {
+  return FEATURE_FILMS.find((film) => film.killer === killer && film.location === location)
 }
