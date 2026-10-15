@@ -1,4 +1,5 @@
-import { Button, Group, Paper, Select, SimpleGrid, Stack, Text, Title } from '@mantine/core'
+import { Button, Group, Input, Paper, Select, SimpleGrid, Stack, Switch, Text, Title } from '@mantine/core'
+import { DateInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -10,11 +11,47 @@ import {
   findFeatureFilm,
   findFeatureFilmByPair,
 } from '../data/featureFilms.ts'
+import {
+  DARK_POWERS_BY_KILLER,
+  FINALES_BY_KILLER,
+  SIGNATURE_CARDS,
+  optionsForKiller,
+} from '../data/gameOptions.ts'
+import { HEROES } from '../data/heroes.ts'
+
+const DATE_FORMAT = 'DD.MM.YYYY'
 
 type EntryFormValues = {
+  date: string | null
   killer: string | null
   location: string | null
   featureFilm: string | null
+  hero: string | null
+  darkPower: string | null
+  finale: string | null
+  isHeroUltimateAbilityRevealed: boolean
+  isHeroWeaponUsed: boolean
+  signatureCard: string | null
+  result: boolean
+}
+
+function parseDateInput(value: string): string | null {
+  const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value.trim())
+  if (!match) return null
+  const day = Number(match[1])
+  const month = Number(match[2])
+  const year = Number(match[3])
+  const date = new Date(Date.UTC(year, month - 1, day))
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    return null
+  }
+  const isoMonth = String(month).padStart(2, '0')
+  const isoDay = String(day).padStart(2, '0')
+  return `${year}-${isoMonth}-${isoDay}`
 }
 
 export default function NewEntryPage() {
@@ -24,29 +61,51 @@ export default function NewEntryPage() {
   const form = useForm<EntryFormValues>({
     mode: 'controlled',
     initialValues: {
+      date: null,
       killer: null,
       location: null,
       featureFilm: null,
+      hero: null,
+      darkPower: null,
+      finale: null,
+      isHeroUltimateAbilityRevealed: false,
+      isHeroWeaponUsed: false,
+      signatureCard: null,
+      result: false,
     },
     validate: {
+      date: (value) => (value ? null : 'Choose a date'),
       killer: (value) => (value ? null : 'Choose a killer'),
       location: (value) => (value ? null : 'Choose a location'),
+      hero: (value) => (value ? null : 'Choose a hero'),
     },
   })
 
-  const canSave = Boolean(form.values.killer && form.values.location)
+  const killerSelected = Boolean(form.values.killer)
+  const darkPowerOptions = optionsForKiller(DARK_POWERS_BY_KILLER, form.values.killer)
+  const finaleOptions = optionsForKiller(FINALES_BY_KILLER, form.values.killer)
+  const canSave = Boolean(
+    form.values.date && form.values.killer && form.values.location && form.values.hero,
+  )
+
+  function clearKillerDependents() {
+    form.setFieldValue('darkPower', null)
+    form.setFieldValue('finale', null)
+  }
 
   function handleFeatureFilmChange(nextFilm: string | null) {
     form.setFieldValue('featureFilm', nextFilm)
     if (!nextFilm) return
     const film = findFeatureFilm(nextFilm)
     if (!film) return
+    if (film.killer !== (form.values.killer ?? '')) clearKillerDependents()
     form.setFieldValue('killer', film.killer)
     form.setFieldValue('location', film.location)
   }
 
   function handleKillerChange(nextKiller: string | null) {
     const killerName = nextKiller ?? ''
+    if (killerName !== (form.values.killer ?? '')) clearKillerDependents()
     form.setFieldValue('killer', nextKiller)
     form.setFieldValue(
       'featureFilm',
@@ -69,9 +128,17 @@ export default function NewEntryPage() {
 
     try {
       await createEntry({
+        date: values.date ?? '',
         killer: values.killer ?? '',
         location: values.location ?? '',
         featureFilm: values.featureFilm ?? '',
+        hero: values.hero ?? '',
+        darkPower: values.darkPower ?? '',
+        finale: values.finale ?? '',
+        isHeroUltimateAbilityRevealed: values.isHeroUltimateAbilityRevealed,
+        isHeroWeaponUsed: values.isHeroWeaponUsed,
+        signatureCard: values.signatureCard ?? '',
+        result: values.result,
       })
       await navigate('/')
     } catch (reason: unknown) {
@@ -81,13 +148,24 @@ export default function NewEntryPage() {
   }
 
   return (
-    <Stack align="center" gap="md" w="100%">
+    <Stack align="center" gap="md" w="100%" maw="75em" mx="auto">
       <Title order={1} ta="center">
-        New entry
+        Add game
       </Title>
       <Paper withBorder p="md" radius="md" w="100%">
         <form onSubmit={form.onSubmit((values) => void handleSubmit(values))}>
           <Stack>
+            <DateInput
+              label="Date"
+              placeholder={DATE_FORMAT}
+              valueFormat={DATE_FORMAT}
+              dateParser={parseDateInput}
+              required
+              withAsterisk
+              clearable
+              key={form.key('date')}
+              {...form.getInputProps('date')}
+            />
             <Select
               label="Feature film"
               placeholder="Start typing"
@@ -124,6 +202,76 @@ export default function NewEntryPage() {
                 onChange={handleLocationChange}
               />
             </SimpleGrid>
+            <Select
+              label="Hero"
+              placeholder="Start typing"
+              data={[...HEROES]}
+              required
+              withAsterisk
+              searchable
+              nothingFoundMessage="Nothing found"
+              key={form.key('hero')}
+              {...form.getInputProps('hero')}
+            />
+            <SimpleGrid cols={2}>
+              <Select
+                label="Dark power"
+                placeholder={killerSelected ? 'Start typing' : 'Choose a killer first'}
+                data={[...darkPowerOptions]}
+                disabled={!killerSelected}
+                searchable
+                clearable
+                nothingFoundMessage="Nothing found"
+                key={form.key('darkPower')}
+                {...form.getInputProps('darkPower')}
+              />
+              <Select
+                label="Finale"
+                placeholder={killerSelected ? 'Start typing' : 'Choose a killer first'}
+                data={[...finaleOptions]}
+                disabled={!killerSelected}
+                searchable
+                clearable
+                nothingFoundMessage="Nothing found"
+                key={form.key('finale')}
+                {...form.getInputProps('finale')}
+              />
+            </SimpleGrid>
+            <Switch
+              label="Ultimate ability revealed"
+              key={form.key('isHeroUltimateAbilityRevealed')}
+              {...form.getInputProps('isHeroUltimateAbilityRevealed', { type: 'checkbox' })}
+            />
+            <Switch
+              label="Hero weapon used"
+              key={form.key('isHeroWeaponUsed')}
+              {...form.getInputProps('isHeroWeaponUsed', { type: 'checkbox' })}
+            />
+            <Select
+              label="Signature card"
+              placeholder="Start typing"
+              data={[...SIGNATURE_CARDS]}
+              searchable
+              clearable
+              nothingFoundMessage="Nothing found"
+              key={form.key('signatureCard')}
+              {...form.getInputProps('signatureCard')}
+            />
+            <Input.Wrapper label="Result">
+              <Group gap="sm" wrap="nowrap" mt={4}>
+                <Text size="sm" fw={form.values.result ? 400 : 700} c={form.values.result ? 'dimmed' : undefined}>
+                  Lose
+                </Text>
+                <Switch
+                  aria-label="Result"
+                  key={form.key('result')}
+                  {...form.getInputProps('result', { type: 'checkbox' })}
+                />
+                <Text size="sm" fw={form.values.result ? 700 : 400} c={form.values.result ? undefined : 'dimmed'}>
+                  Win
+                </Text>
+              </Group>
+            </Input.Wrapper>
             {error ? (
               <Text c="red" ta="center">
                 {error}

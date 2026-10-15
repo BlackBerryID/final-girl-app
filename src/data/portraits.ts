@@ -28,6 +28,29 @@ import ussKonrad from '../assets/locations/uss-konrad.jpg'
 import utopia from '../assets/locations/utopia.jpg'
 import wingardCottage from '../assets/locations/wingard-cottage.jpg'
 import wolfeAsylum from '../assets/locations/wolfe-asylum.jpg'
+import ava from '../assets/heroes/ava.webp'
+import cassie from '../assets/heroes/cassie.webp'
+import christie from '../assets/heroes/christie.webp'
+import christina from '../assets/heroes/christina.webp'
+import cindy from '../assets/heroes/cindy.webp'
+import ellen from '../assets/heroes/ellen.webp'
+import ginny from '../assets/heroes/ginny.webp'
+import heather from '../assets/heroes/heather.webp'
+import janelle from '../assets/heroes/janelle.webp'
+import jenette from '../assets/heroes/jenette.webp'
+import kate from '../assets/heroes/kate.webp'
+import kenzie from '../assets/heroes/kenzie.webp'
+import lindy from '../assets/heroes/lindy.webp'
+import mandy from '../assets/heroes/mandy.webp'
+import meghan from '../assets/heroes/meghan.webp'
+import moud from '../assets/heroes/moud.webp'
+import mrsClous from '../assets/heroes/mrs-clous.webp'
+import octavia from '../assets/heroes/octavia.webp'
+import rita from '../assets/heroes/rita.webp'
+import ronda from '../assets/heroes/ronda.webp'
+import uki from '../assets/heroes/uki.webp'
+import veronica from '../assets/heroes/veronica.webp'
+import { HEROES } from './heroes.ts'
 
 const FEATURE_FILM_IMAGES: Record<string, string> = {
   'Into the Void': intoTheVoid,
@@ -76,6 +99,38 @@ export function killerImage(name: string | undefined): string | undefined {
   return name ? KILLER_IMAGES[name] : undefined
 }
 
+const HERO_IMAGES: Record<(typeof HEROES)[number], string> = {
+  Ava: ava,
+  Cassie: cassie,
+  Christie: christie,
+  Christina: christina,
+  Cindy: cindy,
+  Ellen: ellen,
+  Ginny: ginny,
+  Heather: heather,
+  Janelle: janelle,
+  Jenette: jenette,
+  Kate: kate,
+  Kenzie: kenzie,
+  Lindy: lindy,
+  Mandy: mandy,
+  Meghan: meghan,
+  Moud: moud,
+  'Mrs Clous': mrsClous,
+  Octavia: octavia,
+  Rita: rita,
+  Ronda: ronda,
+  Uki: uki,
+  Veronica: veronica,
+}
+
 export function locationImage(name: string | undefined): string | undefined {
   return name ? LOCATION_IMAGES[name] : undefined
+}
+
+const HERO_NAMES: ReadonlySet<string> = new Set(HEROES)
+
+export function heroImage(name: string | undefined): string | undefined {
+  if (!name || !HERO_NAMES.has(name)) return undefined
+  return HERO_IMAGES[name as (typeof HEROES)[number]]
 }

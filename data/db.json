@@ -21,6 +21,20 @@
       "location": "Wingard Cottage",
       "featureFilm": "A Knock at the Door",
       "createdAt": "2026-10-08T13:10:36.608Z"
+    },
+    {
+      "id": "754b97e4-daf6-4a12-96ea-603c28b257a7",
+      "date": "2026-10-14",
+      "killer": "The Evomorph",
+      "location": "USS Konrad",
+      "featureFilm": "Into the Void",
+      "hero": "Ava",
+      "darkPower": "",
+      "finale": "",
+      "isHeroUltimateAbilityRevealed": true,
+      "isHeroWeaponUsed": false,
+      "signatureCard": "",
+      "result": true
     }
   ]
 }

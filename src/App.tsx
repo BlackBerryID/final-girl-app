@@ -1,4 +1,4 @@
-import { Anchor, Box, Container, Group, Stack, Title } from '@mantine/core'
+import { Anchor, Box, Group, Stack, Title } from '@mantine/core'
 import { NavLink, Route, Routes } from 'react-router'
 import EntriesPage from './pages/EntriesPage.tsx'
 import NewEntryPage from './pages/NewEntryPage.tsx'
@@ -20,26 +20,24 @@ function AppLink({ to, end, children }: { to: string; end?: boolean; children: s
 export default function App() {
   return (
     <Box mih="100vh" py="xl" px="md">
-      <Container size="lg">
-        <Stack align="center" gap="xl">
-          <Stack align="center" gap="sm">
-            <Title order={2}>Final Girl</Title>
-            <Group justify="center" gap="lg">
-              <AppLink to="/" end>
-                Entries
-              </AppLink>
-              <AppLink to="/entries/new">New entry</AppLink>
-            </Group>
-          </Stack>
-          <Box component="main" w="100%">
-            <Routes>
-              <Route path="/" element={<EntriesPage />} />
-              <Route path="/entries/new" element={<NewEntryPage />} />
-              <Route path="*" element={<Title order={3} ta="center">Page not found.</Title>} />
-            </Routes>
-          </Box>
+      <Stack align="center" gap="xl" w="100%">
+        <Stack align="center" gap="sm">
+          <Title order={2}>Final Girl</Title>
+          <Group justify="center" gap="lg">
+            <AppLink to="/" end>
+              History
+            </AppLink>
+            <AppLink to="/entries/new">Add game</AppLink>
+          </Group>
         </Stack>
-      </Container>
+        <Box component="main" w="100%">
+          <Routes>
+            <Route path="/" element={<EntriesPage />} />
+            <Route path="/entries/new" element={<NewEntryPage />} />
+            <Route path="*" element={<Title order={3} ta="center">Page not found.</Title>} />
+          </Routes>
+        </Box>
+      </Stack>
     </Box>
   )
 }

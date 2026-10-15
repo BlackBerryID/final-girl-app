@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { JSONFilePreset } from 'lowdb/node'
-import type { DatabaseData, Entry } from '../src/types.ts'
+import type { DatabaseData, Entry, NewEntry } from '../src/types.ts'
 
 const databaseFile = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -35,22 +35,20 @@ function change(mutate: (data: DatabaseData) => void): Promise<void> {
 export async function listEntries(): Promise<Entry[]> {
   await writeQueue
   const database = await getDatabase()
-  return [...database.data.entries].sort((left, right) =>
-    right.createdAt.localeCompare(left.createdAt),
-  )
+  return database.data.entries
+    .map((entry, index) => ({ entry, index }))
+    .sort((left, right) => {
+      const byDate = (right.entry.date ?? '').localeCompare(left.entry.date ?? '')
+      if (byDate !== 0) return byDate
+      return right.index - left.index
+    })
+    .map(({ entry }) => entry)
 }
 
-export async function addEntry(input: {
-  killer: string
-  location: string
-  featureFilm: string
-}): Promise<Entry> {
+export async function addEntry(input: NewEntry): Promise<Entry> {
   const entry: Entry = {
     id: crypto.randomUUID(),
-    killer: input.killer,
-    location: input.location,
-    featureFilm: input.featureFilm,
-    createdAt: new Date().toISOString(),
+    ...input,
   }
 
   await change((data) => {
@@ -58,4 +56,17 @@ export async function addEntry(input: {
   })
 
   return entry
+}
+
+export async function removeEntry(id: string): Promise<boolean> {
+  let removed = false
+
+  await change((data) => {
+    const index = data.entries.findIndex((entry) => entry.id === id)
+    if (index === -1) return
+    data.entries.splice(index, 1)
+    removed = true
+  })
+
+  return removed
 }

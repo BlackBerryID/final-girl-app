@@ -1,12 +1,6 @@
-import type { Entry } from './types.ts'
+import type { Entry, NewEntry } from './types.ts'
 
-export type NewEntry = {
-  killer: string
-  location: string
-  featureFilm: string
-}
-
-async function readError(response: Response): Promise<string> {
+async function readError(response: Response, fallback: string): Promise<string> {
   try {
     const body = (await response.json()) as { error?: unknown }
     if (typeof body.error === 'string' && body.error.length > 0) return body.error
@@ -14,7 +8,7 @@ async function readError(response: Response): Promise<string> {
     // The response body is not JSON.
   }
 
-  return 'Could not save the entry'
+  return fallback
 }
 
 export async function fetchEntries(signal?: AbortSignal): Promise<Entry[]> {
@@ -30,6 +24,14 @@ export async function createEntry(input: NewEntry): Promise<Entry> {
     body: JSON.stringify(input),
   })
 
-  if (!response.ok) throw new Error(await readError(response))
+  if (!response.ok) throw new Error(await readError(response, 'Could not save the entry'))
   return response.json() as Promise<Entry>
+}
+
+export async function deleteEntry(id: string): Promise<void> {
+  const response = await fetch(`/api/entries/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) throw new Error(await readError(response, 'Could not delete the entry'))
 }

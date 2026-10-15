@@ -2,3 +2,25 @@
 
 @import 'tailwindcss';
 @import '@mantine/core/styles.layer.css';
+@import '@mantine/dates/styles.layer.css';
+
+.history-layout {
+  width: min(100%, max(75rem, 83.333vw));
+  margin-inline: auto;
+}
+
+.history-table tbody tr.history-day-gap {
+  background-color: var(--mantine-color-body);
+  border-bottom: 0;
+}
+
+.history-table tbody tr.history-day-gap > td {
+  height: 1.25rem;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  background-image: linear-gradient(var(--table-border-color), var(--table-border-color));
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
