@@ -1,5 +1,3 @@
-export const MIX_FEATURE_FILM = 'mix'
-
 export const FEATURE_FILMS = [
   {
     name: 'Into the Void',
@@ -59,10 +57,7 @@ const EXTRA_KILLERS = ['Krampus'] as const
 
 export const KILLERS = [...FEATURE_FILMS.map((film) => film.killer), ...EXTRA_KILLERS]
 export const LOCATIONS = FEATURE_FILMS.map((film) => film.location)
-export const FEATURE_FILM_OPTIONS = [
-  MIX_FEATURE_FILM,
-  ...FEATURE_FILMS.map((film) => film.name),
-]
+export const FEATURE_FILM_OPTIONS = FEATURE_FILMS.map((film) => film.name)
 
 export function findFeatureFilm(name: string): FeatureFilm | undefined {
   return FEATURE_FILMS.find((film) => film.name === name)

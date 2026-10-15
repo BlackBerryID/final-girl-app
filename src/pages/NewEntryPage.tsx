@@ -1,5 +1,6 @@
-import { Select } from '@mantine/core'
-import { useState, type FormEvent } from 'react'
+import { Button, Group, Paper, Select, SimpleGrid, Stack, Text, Title } from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { createEntry } from '../api.ts'
 import {
@@ -10,31 +11,68 @@ import {
   findFeatureFilmByPair,
 } from '../data/featureFilms.ts'
 
+type EntryFormValues = {
+  killer: string | null
+  location: string | null
+  featureFilm: string | null
+}
+
 export default function NewEntryPage() {
   const navigate = useNavigate()
-  const [killer, setKiller] = useState('')
-  const [location, setLocation] = useState('')
-  const [featureFilm, setFeatureFilm] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const form = useForm<EntryFormValues>({
+    mode: 'controlled',
+    initialValues: {
+      killer: null,
+      location: null,
+      featureFilm: null,
+    },
+    validate: {
+      killer: (value) => (value ? null : 'Choose a killer'),
+      location: (value) => (value ? null : 'Choose a location'),
+    },
+  })
 
-  const canSave = killer.length > 0 && location.length > 0 && featureFilm.length > 0
+  const canSave = Boolean(form.values.killer && form.values.location)
 
-  function handleFeatureFilmChange(nextFilm: string) {
-    setFeatureFilm(nextFilm)
+  function handleFeatureFilmChange(nextFilm: string | null) {
+    form.setFieldValue('featureFilm', nextFilm)
+    if (!nextFilm) return
     const film = findFeatureFilm(nextFilm)
     if (!film) return
-    setKiller(film.killer)
-    setLocation(film.location)
+    form.setFieldValue('killer', film.killer)
+    form.setFieldValue('location', film.location)
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+  function handleKillerChange(nextKiller: string | null) {
+    const killerName = nextKiller ?? ''
+    form.setFieldValue('killer', nextKiller)
+    form.setFieldValue(
+      'featureFilm',
+      findFeatureFilmByPair(killerName, form.values.location ?? '')?.name ?? null,
+    )
+  }
+
+  function handleLocationChange(nextLocation: string | null) {
+    const locationName = nextLocation ?? ''
+    form.setFieldValue('location', nextLocation)
+    form.setFieldValue(
+      'featureFilm',
+      findFeatureFilmByPair(form.values.killer ?? '', locationName)?.name ?? null,
+    )
+  }
+
+  async function handleSubmit(values: EntryFormValues) {
     setSaving(true)
     setError(null)
 
     try {
-      await createEntry({ killer, location, featureFilm })
+      await createEntry({
+        killer: values.killer ?? '',
+        location: values.location ?? '',
+        featureFilm: values.featureFilm ?? '',
+      })
       await navigate('/')
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Could not save the entry')
@@ -43,62 +81,62 @@ export default function NewEntryPage() {
   }
 
   return (
-    <section className="flex w-full flex-col items-center gap-4">
-      <h1 className="text-center text-3xl font-semibold">New entry</h1>
-      <form
-        className="grid w-full grid-cols-12 gap-4 rounded-xl border border-zinc-600 bg-zinc-800 p-4"
-        onSubmit={(event) => void handleSubmit(event)}
-      >
-        <div className="col-span-12">
-          <Select
-            label="Feature film"
-            placeholder="Start typing"
-            data={[...FEATURE_FILM_OPTIONS]}
-            value={featureFilm || null}
-            onChange={(nextFilm) => handleFeatureFilmChange(nextFilm ?? '')}
-            searchable
-            nothingFoundMessage="Nothing found"
-          />
-        </div>
-        <div className="col-span-6">
-          <Select
-            label="Killer"
-            placeholder="Start typing"
-            data={KILLERS}
-            value={killer || null}
-            onChange={(nextKiller) => {
-              const killerName = nextKiller ?? ''
-              setKiller(killerName)
-              setFeatureFilm(findFeatureFilmByPair(killerName, location)?.name ?? '')
-            }}
-            searchable
-            nothingFoundMessage="Nothing found"
-          />
-        </div>
-        <div className="col-span-6">
-          <Select
-            label="Location"
-            placeholder="Start typing"
-            data={LOCATIONS}
-            value={location || null}
-            onChange={(nextLocation) => {
-              const locationName = nextLocation ?? ''
-              setLocation(locationName)
-              setFeatureFilm(findFeatureFilmByPair(killer, locationName)?.name ?? '')
-            }}
-            searchable
-            nothingFoundMessage="Nothing found"
-          />
-        </div>
-        {error ? <p className="col-span-12 text-center text-rose-300">{error}</p> : null}
-        <button
-          type="submit"
-          disabled={saving || !canSave}
-          className="col-span-12 justify-self-center rounded-lg bg-zinc-100 px-4 py-2 font-semibold text-zinc-900 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          Add
-        </button>
-      </form>
-    </section>
+    <Stack align="center" gap="md" w="100%">
+      <Title order={1} ta="center">
+        New entry
+      </Title>
+      <Paper withBorder p="md" radius="md" w="100%">
+        <form onSubmit={form.onSubmit((values) => void handleSubmit(values))}>
+          <Stack>
+            <Select
+              label="Feature film"
+              placeholder="Start typing"
+              data={FEATURE_FILM_OPTIONS}
+              searchable
+              nothingFoundMessage="Nothing found"
+              key={form.key('featureFilm')}
+              {...form.getInputProps('featureFilm')}
+              onChange={handleFeatureFilmChange}
+            />
+            <SimpleGrid cols={2}>
+              <Select
+                label="Killer"
+                placeholder="Start typing"
+                data={KILLERS}
+                required
+                withAsterisk
+                searchable
+                nothingFoundMessage="Nothing found"
+                key={form.key('killer')}
+                {...form.getInputProps('killer')}
+                onChange={handleKillerChange}
+              />
+              <Select
+                label="Location"
+                placeholder="Start typing"
+                data={LOCATIONS}
+                required
+                withAsterisk
+                searchable
+                nothingFoundMessage="Nothing found"
+                key={form.key('location')}
+                {...form.getInputProps('location')}
+                onChange={handleLocationChange}
+              />
+            </SimpleGrid>
+            {error ? (
+              <Text c="red" ta="center">
+                {error}
+              </Text>
+            ) : null}
+            <Group justify="center">
+              <Button type="submit" loading={saving} disabled={!canSave}>
+                Add
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Paper>
+    </Stack>
   )
 }

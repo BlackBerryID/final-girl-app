@@ -1,9 +1,9 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Connect, Plugin } from 'vite'
 import {
-  FEATURE_FILM_OPTIONS,
   KILLERS,
   LOCATIONS,
+  findFeatureFilmByPair,
 } from '../src/data/featureFilms.ts'
 import { addEntry, listEntries } from './db.ts'
 
@@ -43,12 +43,17 @@ function parseNewEntry(value: unknown): {
   const record = value as Record<string, unknown>
   if (!isListed(record.killer, KILLERS)) return null
   if (!isListed(record.location, LOCATIONS)) return null
-  if (!isListed(record.featureFilm, FEATURE_FILM_OPTIONS)) return null
+
+  const matchedFilm = findFeatureFilmByPair(record.killer, record.location)
+  if (record.featureFilm === '') {
+    return { killer: record.killer, location: record.location, featureFilm: '' }
+  }
+  if (!matchedFilm || record.featureFilm !== matchedFilm.name) return null
 
   return {
     killer: record.killer,
     location: record.location,
-    featureFilm: record.featureFilm,
+    featureFilm: matchedFilm.name,
   }
 }
 
@@ -77,7 +82,7 @@ async function handleApi(
     const input = parseNewEntry(payload)
     if (!input) {
       sendJson(response, 400, {
-        error: 'Choose a killer, location, and feature film from the list',
+        error: 'Choose a killer and location from the list',
       })
       return true
     }

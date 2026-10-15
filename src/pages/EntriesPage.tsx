@@ -1,3 +1,4 @@
+import { Alert, Anchor, Group, Loader, Stack, Table, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { fetchEntries } from '../api.ts'
@@ -12,10 +13,10 @@ function formatCreatedAt(value: string) {
 }
 
 function NamedPortrait({ name, image }: { name: string | undefined; image: string | undefined }) {
-  if (!name) return '—'
+  if (!name) return <Text span>—</Text>
 
   return (
-    <span className="flex items-center gap-2">
+    <Group gap="xs" wrap="nowrap">
       {image ? (
         <span
           aria-hidden
@@ -27,8 +28,8 @@ function NamedPortrait({ name, image }: { name: string | undefined; image: strin
           }}
         />
       ) : null}
-      <span className="text-base font-medium leading-tight">{name}</span>
-    </span>
+      <Text fw={500}>{name}</Text>
+    </Group>
   )
 }
 
@@ -56,43 +57,53 @@ export default function EntriesPage() {
   }, [])
 
   return (
-    <section className="flex w-full flex-col items-center gap-4">
-      <h1 className="text-center text-3xl font-semibold">Entries</h1>
-      {loading ? <p className="text-zinc-300">Loading…</p> : null}
-      {error ? <p className="text-rose-300">{error}</p> : null}
+    <Stack align="center" gap="md" w="100%">
+      <Title order={1} ta="center">
+        Entries
+      </Title>
+      {loading ? <Loader /> : null}
+      {error ? (
+        <Alert color="red" w="100%">
+          {error}
+        </Alert>
+      ) : null}
       {!loading && !error && entries.length === 0 ? (
-        <p className="text-center text-zinc-300">
-          No entries yet. <Link to="/entries/new" className="text-white underline">Add the first one</Link>.
-        </p>
+        <Text ta="center">
+          No entries yet. <Anchor component={Link} to="/entries/new">Add the first one</Anchor>.
+        </Text>
       ) : null}
       {entries.length > 0 ? (
-        <table className="w-full border-separate border-spacing-0 overflow-hidden rounded-xl border border-zinc-600 text-left">
-          <thead className="bg-zinc-800 text-sm text-zinc-300">
-            <tr>
-              <th className="px-4 py-3 font-semibold">Feature film</th>
-              <th className="px-4 py-3 font-semibold">Killer</th>
-              <th className="px-4 py-3 font-semibold">Location</th>
-              <th className="px-4 py-3 font-semibold">Added</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entries.map((entry) => (
-              <tr key={entry.id} className="border-t border-zinc-600 bg-zinc-800/60">
-                <td className="px-4 py-3">
-                  <NamedPortrait name={entry.featureFilm} image={featureFilmImage(entry.featureFilm)} />
-                </td>
-                <td className="px-4 py-3">
-                  <NamedPortrait name={entry.killer} image={killerImage(entry.killer)} />
-                </td>
-                <td className="px-4 py-3">
-                  <NamedPortrait name={entry.location} image={locationImage(entry.location)} />
-                </td>
-                <td className="px-4 py-3 text-zinc-300">{formatCreatedAt(entry.createdAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table.ScrollContainer minWidth={720} w="100%">
+          <Table striped withTableBorder>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Feature film</Table.Th>
+                <Table.Th>Killer</Table.Th>
+                <Table.Th>Location</Table.Th>
+                <Table.Th>Added</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {entries.map((entry) => (
+                <Table.Tr key={entry.id}>
+                  <Table.Td>
+                    <NamedPortrait name={entry.featureFilm} image={featureFilmImage(entry.featureFilm)} />
+                  </Table.Td>
+                  <Table.Td>
+                    <NamedPortrait name={entry.killer} image={killerImage(entry.killer)} />
+                  </Table.Td>
+                  <Table.Td>
+                    <NamedPortrait name={entry.location} image={locationImage(entry.location)} />
+                  </Table.Td>
+                  <Table.Td>
+                    <Text c="dimmed">{formatCreatedAt(entry.createdAt)}</Text>
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Table.ScrollContainer>
       ) : null}
-    </section>
+    </Stack>
   )
 }
