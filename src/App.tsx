@@ -2,6 +2,7 @@ import { Anchor, Box, Group, Stack, Title } from '@mantine/core'
 import { NavLink, Route, Routes } from 'react-router'
 import EntriesPage from './pages/EntriesPage.tsx'
 import NewEntryPage from './pages/NewEntryPage.tsx'
+import StatsPage from './pages/StatsPage.tsx'
 
 function AppLink({ to, end, children }: { to: string; end?: boolean; children: string }) {
   return (
@@ -27,15 +28,17 @@ export default function App() {
             <AppLink to="/" end>
               History
             </AppLink>
+            <AppLink to="/stats">Statistics</AppLink>
             <AppLink to="/entries/new">Add game</AppLink>
           </Group>
         </Stack>
         <Box component="main" w="100%">
-          <Routes>
-            <Route path="/" element={<EntriesPage />} />
-            <Route path="/entries/new" element={<NewEntryPage />} />
-            <Route path="*" element={<Title order={3} ta="center">Page not found.</Title>} />
-          </Routes>
+            <Routes>
+              <Route path="/" element={<EntriesPage />} />
+              <Route path="/stats" element={<StatsPage />} />
+              <Route path="/entries/new" element={<NewEntryPage />} />
+              <Route path="*" element={<Title order={3} ta="center">Page not found.</Title>} />
+            </Routes>
         </Box>
       </Stack>
     </Box>
