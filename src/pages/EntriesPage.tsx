@@ -22,17 +22,22 @@ const COLUMN_COUNT = 12
 
 function displayDate(value: string | undefined) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value ?? '')
-  if (!match) return '—'
+  if (!match) return ''
   return `${match[3]}.${match[2]}.${match[1]}`
 }
 
 function displayText(value: string | undefined) {
-  return value ? value : '—'
+  return value ?? ''
 }
 
-function displayFlag(value: boolean | undefined) {
-  if (typeof value !== 'boolean') return '—'
-  return value ? 'Yes' : 'No'
+function FlagMark({ value }: { value: boolean | undefined }) {
+  if (typeof value !== 'boolean') return null
+
+  return (
+    <Text span aria-label={value ? 'Yes' : 'No'}>
+      {value ? '\u2795' : '\u2796'}
+    </Text>
+  )
 }
 
 function TrashIcon() {
@@ -57,8 +62,16 @@ function TrashIcon() {
   )
 }
 
-function NamedPortrait({ name, image }: { name: string | undefined; image: string | undefined }) {
-  if (!name) return <Text span>—</Text>
+function NamedPortrait({
+  name,
+  image,
+  imagePosition = 'center top',
+}: {
+  name: string | undefined
+  image: string | undefined
+  imagePosition?: string
+}) {
+  if (!name) return null
 
   return (
     <Group gap="xs" wrap="nowrap">
@@ -69,7 +82,7 @@ function NamedPortrait({ name, image }: { name: string | undefined; image: strin
           style={{
             backgroundImage: `url(${image})`,
             backgroundSize: '200% auto',
-            backgroundPosition: 'center top',
+            backgroundPosition: imagePosition,
           }}
         />
       ) : null}
@@ -79,7 +92,7 @@ function NamedPortrait({ name, image }: { name: string | undefined; image: strin
 }
 
 function ResultText({ value }: { value: boolean | undefined }) {
-  if (typeof value !== 'boolean') return <Text c="dimmed">—</Text>
+  if (typeof value !== 'boolean') return null
   return (
     <Text fw={600} c={value ? 'teal' : 'red'}>
       {value ? 'Win' : 'Lose'}
@@ -171,8 +184,8 @@ export default function EntriesPage() {
                       <Table.Th>Hero</Table.Th>
                       <Table.Th>Dark power</Table.Th>
                       <Table.Th>Finale</Table.Th>
-                      <Table.Th>Ultimate ability</Table.Th>
-                      <Table.Th>Weapon used</Table.Th>
+                      <Table.Th ta="center">Ultimate ability</Table.Th>
+                      <Table.Th ta="center">Weapon used</Table.Th>
                       <Table.Th>Signature card</Table.Th>
                       <Table.Th>Result</Table.Th>
                       <Table.Th>
@@ -215,12 +228,20 @@ export default function EntriesPage() {
                               />
                             </Table.Td>
                             <Table.Td>
-                              <NamedPortrait name={entry.hero} image={heroImage(entry.hero)} />
+                              <NamedPortrait
+                                name={entry.hero}
+                                image={heroImage(entry.hero)}
+                                imagePosition="center center"
+                              />
                             </Table.Td>
                             <Table.Td>{displayText(entry.darkPower)}</Table.Td>
                             <Table.Td>{displayText(entry.finale)}</Table.Td>
-                            <Table.Td>{displayFlag(entry.isHeroUltimateAbilityRevealed)}</Table.Td>
-                            <Table.Td>{displayFlag(entry.isHeroWeaponUsed)}</Table.Td>
+                            <Table.Td ta="center">
+                              <FlagMark value={entry.isHeroUltimateAbilityRevealed} />
+                            </Table.Td>
+                            <Table.Td ta="center">
+                              <FlagMark value={entry.isHeroWeaponUsed} />
+                            </Table.Td>
                             <Table.Td>{displayText(entry.signatureCard)}</Table.Td>
                             <Table.Td>
                               <ResultText value={entry.result} />

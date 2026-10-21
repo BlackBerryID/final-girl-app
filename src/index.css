@@ -15,12 +15,12 @@
 }
 
 .history-table tbody tr.history-day-gap > td {
-  height: 1.25rem;
+  height: 2.25rem;
   padding: 0;
   border: 0;
   background-color: transparent;
   background-image: linear-gradient(var(--table-border-color), var(--table-border-color));
-  background-size: 100% 1px;
+  background-size: 100% 2px;
   background-repeat: no-repeat;
   background-position: center;
 }
