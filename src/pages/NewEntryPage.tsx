@@ -28,6 +28,7 @@ type EntryFormValues = {
   location: string | null
   featureFilm: string | null
   hero: string | null
+  heroNoData: boolean
   darkPower: string | null
   finale: string | null
   isHeroUltimateAbilityRevealed: boolean
@@ -83,6 +84,7 @@ export default function NewEntryPage() {
       location: null,
       featureFilm: null,
       hero: null,
+      heroNoData: false,
       darkPower: null,
       finale: null,
       isHeroUltimateAbilityRevealed: false,
@@ -97,7 +99,7 @@ export default function NewEntryPage() {
       date: (value) => (value ? null : 'Choose a date'),
       killer: (value) => (value ? null : 'Choose a killer'),
       location: (value) => (value ? null : 'Choose a location'),
-      hero: (value) => (value ? null : 'Choose a hero'),
+      hero: (value, values) => (values.heroNoData || value ? null : 'Choose a hero'),
       note: (value) => (value.length <= 10 ? null : 'Use at most 10 characters'),
     },
   })
@@ -106,7 +108,10 @@ export default function NewEntryPage() {
   const darkPowerOptions = selectItems(markedOptionsForKiller(DARK_POWERS_BY_KILLER, form.values.killer))
   const finaleOptions = selectItems(markedOptionsForKiller(FINALES_BY_KILLER, form.values.killer))
   const canSave = Boolean(
-    form.values.date && form.values.killer && form.values.location && form.values.hero,
+    form.values.date &&
+      form.values.killer &&
+      form.values.location &&
+      (form.values.heroNoData || form.values.hero),
   )
 
   function clearKillerDependents() {
@@ -153,7 +158,7 @@ export default function NewEntryPage() {
         killer: values.killer ?? '',
         location: values.location ?? '',
         featureFilm: values.featureFilm ?? '',
-        hero: values.hero ?? '',
+        hero: values.heroNoData ? null : (values.hero ?? ''),
         darkPower: values.darkPower ?? '',
         finale: values.finale ?? '',
         isHeroUltimateAbilityRevealed: values.ultimateAbilityNoData ? null : values.isHeroUltimateAbilityRevealed,
@@ -224,17 +229,27 @@ export default function NewEntryPage() {
                 onChange={handleLocationChange}
               />
             </SimpleGrid>
-            <Select
-              label="Hero"
-              placeholder="Start typing"
-              data={[...HEROES]}
-              required
-              withAsterisk
-              searchable
-              nothingFoundMessage="Nothing found"
-              key={form.key('hero')}
-              {...form.getInputProps('hero')}
-            />
+            <Group align="flex-end" wrap="nowrap" gap="md">
+              <Select
+                label="Hero"
+                placeholder="Start typing"
+                data={[...HEROES]}
+                required={!form.values.heroNoData}
+                withAsterisk={!form.values.heroNoData}
+                searchable
+                nothingFoundMessage="Nothing found"
+                style={{ flex: '1 1 auto' }}
+                key={form.key('hero')}
+                {...form.getInputProps('hero')}
+                disabled={form.values.heroNoData}
+              />
+              <Checkbox
+                label="No data"
+                mb={8}
+                key={form.key('heroNoData')}
+                {...form.getInputProps('heroNoData', { type: 'checkbox' })}
+              />
+            </Group>
             <SimpleGrid cols={2}>
               <Select
                 label="Dark power"

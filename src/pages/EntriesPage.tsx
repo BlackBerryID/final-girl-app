@@ -289,11 +289,17 @@ export default function EntriesPage() {
                               />
                             </Table.Td>
                             <Table.Td>
-                              <NamedPortrait
-                                name={entry.hero}
-                                image={heroImage(entry.hero)}
-                                imagePosition="center center"
-                              />
+                              {entry.hero === null ? (
+                                <Text span aria-label="No">
+                                  {'\u2796'}
+                                </Text>
+                              ) : (
+                                <NamedPortrait
+                                  name={entry.hero}
+                                  image={heroImage(entry.hero)}
+                                  imagePosition="center center"
+                                />
+                              )}
                             </Table.Td>
                             <Table.Td>
                               <MarkedValue

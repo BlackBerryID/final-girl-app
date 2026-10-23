@@ -83,7 +83,10 @@ function parseNewEntry(value: unknown): NewEntry | null {
   if (!date || !isListed(record.killer, KILLERS) || !isListed(record.location, LOCATIONS)) {
     return null
   }
-  if (!isListed(record.hero, HEROES)) return null
+  let hero: string | null
+  if (record.hero === null) hero = null
+  else if (isListed(record.hero, HEROES)) hero = record.hero
+  else return null
 
   let featureFilm = ''
   if (record.featureFilm !== '') {
@@ -116,7 +119,7 @@ function parseNewEntry(value: unknown): NewEntry | null {
     killer: record.killer,
     location: record.location,
     featureFilm,
-    hero: record.hero,
+    hero,
     darkPower,
     finale,
     isHeroUltimateAbilityRevealed,

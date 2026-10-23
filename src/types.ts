@@ -4,7 +4,7 @@ export type Entry = {
   killer?: string
   location?: string
   featureFilm?: string
-  hero?: string
+  hero?: string | null
   darkPower?: string
   finale?: string
   isHeroUltimateAbilityRevealed?: boolean | null
@@ -19,7 +19,7 @@ export type NewEntry = {
   killer: string
   location: string
   featureFilm: string
-  hero: string
+  hero: string | null
   darkPower: string
   finale: string
   isHeroUltimateAbilityRevealed: boolean | null

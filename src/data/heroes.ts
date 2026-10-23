@@ -15,7 +15,7 @@ export const HEROES = [
   'Mandy',
   'Meghan',
   'Moud',
-  'Mrs Clous',
+  'Mrs Claus',
   'Octavia',
   'Rita',
   'Ronda',

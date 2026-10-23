@@ -44,7 +44,7 @@ import lindy from '../assets/heroes/lindy.webp'
 import mandy from '../assets/heroes/mandy.webp'
 import meghan from '../assets/heroes/meghan.webp'
 import moud from '../assets/heroes/moud.webp'
-import mrsClous from '../assets/heroes/mrs-clous.webp'
+import mrsClaus from '../assets/heroes/mrs-claus.webp'
 import octavia from '../assets/heroes/octavia.webp'
 import rita from '../assets/heroes/rita.webp'
 import ronda from '../assets/heroes/ronda.webp'
@@ -116,7 +116,7 @@ const HERO_IMAGES: Record<(typeof HEROES)[number], string> = {
   Mandy: mandy,
   Meghan: meghan,
   Moud: moud,
-  'Mrs Clous': mrsClous,
+  'Mrs Claus': mrsClaus,
   Octavia: octavia,
   Rita: rita,
   Ronda: ronda,
