@@ -17,6 +17,48 @@ export const DARK_POWERS_BY_KILLER: Record<string, readonly MarkedOption[]> = {
     { name: 'Rejecting God' },
     { name: 'Satanic influence', epic: true },
   ],
+  'The Intruders': [
+    { name: 'Maskaphobia' },
+    { name: 'Strength in numbers' },
+    { name: 'No remorse' },
+    { name: "Won't stay down", epic: true },
+  ],
+  'The Tormentor': [
+    { name: 'Horrifying traps' },
+    { name: 'Unfair traps' },
+    { name: 'Overkill traps' },
+    { name: 'Endless traps', epic: true },
+  ],
+  Slayer: [
+    { name: 'Master plan' },
+    { name: 'Renewed determination' },
+    { name: 'Mind control' },
+    { name: "It's in my head!", epic: true },
+  ],
+  Razorface: [
+    { name: 'Life drain' },
+    { name: 'Soulbound' },
+    { name: 'Helleport' },
+    { name: 'Infinite despair', epic: true },
+  ],
+  Krampus: [
+    { name: 'Explosive gifts' },
+    { name: 'Blood and cookies' },
+    { name: 'Tantalizing gifts' },
+    { name: 'Never ending gifts', epic: true },
+  ],
+  'The Ratchet Lady': [
+    { name: 'Manic burst' },
+    { name: 'Dark injection' },
+    { name: 'Bloodfear' },
+    { name: 'Shield of madness', epic: true },
+  ],
+  'The Eyeless': [
+    { name: 'Quick counter' },
+    { name: 'Hard skin' },
+    { name: 'Reactive swipe' },
+    { name: 'High alert', epic: true },
+  ],
 }
 
 /** Keys are killer names from the killer list. */
@@ -32,6 +74,48 @@ export const FINALES_BY_KILLER: Record<string, readonly MarkedOption[]> = {
     { name: 'Hell on earth' },
     { name: 'It wants you!' },
     { name: 'Legions of hell', epic: true },
+  ],
+  'The Intruders': [
+    { name: "You're gonna die" },
+    { name: 'Release the beast' },
+    { name: 'Hunt sweet hunt' },
+    { name: 'We know where you live', epic: true },
+  ],
+  'The Tormentor': [
+    { name: 'The ultimate trap' },
+    { name: 'Game over!' },
+    { name: 'No escape!' },
+    { name: 'No rest for the weary', epic: true },
+  ],
+  Slayer: [
+    { name: 'Interdimensional rift collapse' },
+    { name: "Let's finish this" },
+    { name: 'Welcome to my world' },
+    { name: 'Your time is up', epic: true },
+  ],
+  Razorface: [
+    { name: 'I feast on your pain' },
+    { name: 'Taste our pleasures' },
+    { name: 'Chains of torment' },
+    { name: 'Legendary suffering', epic: true },
+  ],
+  Krampus: [
+    { name: 'Bamf!' },
+    { name: 'Soul lust' },
+    { name: 'Unholy gifts' },
+    { name: 'Past midnight', epic: true },
+  ],
+  'The Ratchet Lady': [
+    { name: 'Hold her down' },
+    { name: 'Feed the madness' },
+    { name: "It's raining maniacs" },
+    { name: 'Enter the madhouse', epic: true },
+  ],
+  'The Eyeless': [
+    { name: 'It knows my moves!' },
+    { name: 'No more running' },
+    { name: 'It can hear everything!' },
+    { name: 'Final slash', epic: true },
   ],
 }
 
