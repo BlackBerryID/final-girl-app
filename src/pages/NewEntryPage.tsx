@@ -15,7 +15,8 @@ import {
   DARK_POWERS_BY_KILLER,
   FINALES_BY_KILLER,
   SIGNATURE_CARDS,
-  optionsForKiller,
+  markedOptionsForKiller,
+  type MarkedOption,
 } from '../data/gameOptions.ts'
 import { HEROES } from '../data/heroes.ts'
 
@@ -34,6 +35,19 @@ type EntryFormValues = {
   signatureCard: string | null
   note: string
   result: boolean
+}
+
+function selectItems(options: readonly MarkedOption[]) {
+  return options.map((option) => ({
+    value: option.name,
+    label: option.name,
+    epic: option.epic === true,
+  }))
+}
+
+function renderEpicOption({ option }: { option: { label: string; epic?: boolean } }) {
+  if (!option.epic) return option.label
+  return <span className="epic-option">{option.label}</span>
 }
 
 function parseDateInput(value: string): string | null {
@@ -85,8 +99,8 @@ export default function NewEntryPage() {
   })
 
   const killerSelected = Boolean(form.values.killer)
-  const darkPowerOptions = optionsForKiller(DARK_POWERS_BY_KILLER, form.values.killer)
-  const finaleOptions = optionsForKiller(FINALES_BY_KILLER, form.values.killer)
+  const darkPowerOptions = selectItems(markedOptionsForKiller(DARK_POWERS_BY_KILLER, form.values.killer))
+  const finaleOptions = selectItems(markedOptionsForKiller(FINALES_BY_KILLER, form.values.killer))
   const canSave = Boolean(
     form.values.date && form.values.killer && form.values.location && form.values.hero,
   )
@@ -221,7 +235,8 @@ export default function NewEntryPage() {
               <Select
                 label="Dark power"
                 placeholder={killerSelected ? 'Start typing' : 'Choose a killer first'}
-                data={[...darkPowerOptions]}
+                data={darkPowerOptions}
+                renderOption={renderEpicOption}
                 disabled={!killerSelected}
                 searchable
                 clearable
@@ -232,7 +247,8 @@ export default function NewEntryPage() {
               <Select
                 label="Finale"
                 placeholder={killerSelected ? 'Start typing' : 'Choose a killer first'}
-                data={[...finaleOptions]}
+                data={finaleOptions}
+                renderOption={renderEpicOption}
                 disabled={!killerSelected}
                 searchable
                 clearable

@@ -15,6 +15,7 @@ import {
 import { Fragment, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { createDump, deleteEntry, fetchEntries } from '../api.ts'
+import { DARK_POWERS_BY_KILLER, FINALES_BY_KILLER, isEpicOption } from '../data/gameOptions.ts'
 import { featureFilmImage, heroImage, killerImage, locationImage } from '../data/portraits.ts'
 import type { Entry } from '../types.ts'
 
@@ -28,6 +29,19 @@ function displayDate(value: string | undefined) {
 
 function displayText(value: string | undefined) {
   return value ?? ''
+}
+
+function MarkedValue({
+  value,
+  epic,
+}: {
+  value: string | undefined
+  epic: boolean
+}) {
+  const text = displayText(value)
+  if (!text) return null
+  if (!epic) return text
+  return <span className="epic-history">{text}</span>
 }
 
 function FlagMark({ value }: { value: boolean | undefined }) {
@@ -275,8 +289,18 @@ export default function EntriesPage() {
                                 imagePosition="center center"
                               />
                             </Table.Td>
-                            <Table.Td>{displayText(entry.darkPower)}</Table.Td>
-                            <Table.Td>{displayText(entry.finale)}</Table.Td>
+                            <Table.Td>
+                              <MarkedValue
+                                value={entry.darkPower}
+                                epic={isEpicOption(DARK_POWERS_BY_KILLER, entry.killer, entry.darkPower)}
+                              />
+                            </Table.Td>
+                            <Table.Td>
+                              <MarkedValue
+                                value={entry.finale}
+                                epic={isEpicOption(FINALES_BY_KILLER, entry.killer, entry.finale)}
+                              />
+                            </Table.Td>
                             <Table.Td ta="center">
                               <FlagMark value={entry.isHeroUltimateAbilityRevealed} />
                             </Table.Td>

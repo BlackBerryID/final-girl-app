@@ -22,6 +22,14 @@ html {
   white-space: nowrap;
 }
 
+[role='option']:has(.epic-option):not([data-combobox-selected]) {
+  background-color: rgba(140, 36, 48, 0.28);
+}
+
+.epic-history {
+  color: #8d1c2c;
+}
+
 .history-table tbody tr.history-day-gap {
   background-color: var(--mantine-color-body);
   border-bottom: 0;
