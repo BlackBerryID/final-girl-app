@@ -63,6 +63,12 @@ function parseBoolean(value: unknown): boolean | null {
   return typeof value === 'boolean' ? value : null
 }
 
+function parseBooleanOrNull(value: unknown): boolean | null | undefined {
+  if (value === null) return null
+  if (typeof value === 'boolean') return value
+  return undefined
+}
+
 function parseNote(value: unknown): string | null {
   if (value === undefined || value === null) return ''
   if (typeof value !== 'string' || value.length > 10) return null
@@ -90,16 +96,16 @@ function parseNewEntry(value: unknown): NewEntry | null {
   const finale = parseListedOrEmpty(record.finale, optionsForKiller(FINALES_BY_KILLER, record.killer))
   const signatureCard = parseListedOrEmpty(record.signatureCard, SIGNATURE_CARDS)
   const note = parseNote(record.note)
-  const isHeroUltimateAbilityRevealed = parseBoolean(record.isHeroUltimateAbilityRevealed)
-  const isHeroWeaponUsed = parseBoolean(record.isHeroWeaponUsed)
+  const isHeroUltimateAbilityRevealed = parseBooleanOrNull(record.isHeroUltimateAbilityRevealed)
+  const isHeroWeaponUsed = parseBooleanOrNull(record.isHeroWeaponUsed)
   const result = parseBoolean(record.result)
   if (
     darkPower === null ||
     finale === null ||
     signatureCard === null ||
     note === null ||
-    isHeroUltimateAbilityRevealed === null ||
-    isHeroWeaponUsed === null ||
+    isHeroUltimateAbilityRevealed === undefined ||
+    isHeroWeaponUsed === undefined ||
     result === null
   ) {
     return null

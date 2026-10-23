@@ -1,4 +1,4 @@
-import { Button, Group, Input, Paper, Select, SimpleGrid, Stack, Switch, Text, TextInput, Title } from '@mantine/core'
+import { Button, Checkbox, Group, Input, Paper, Select, SimpleGrid, Stack, Switch, Text, TextInput, Title } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import { useState } from 'react'
@@ -31,7 +31,9 @@ type EntryFormValues = {
   darkPower: string | null
   finale: string | null
   isHeroUltimateAbilityRevealed: boolean
+  ultimateAbilityNoData: boolean
   isHeroWeaponUsed: boolean
+  weaponUsedNoData: boolean
   signatureCard: string | null
   note: string
   result: boolean
@@ -84,7 +86,9 @@ export default function NewEntryPage() {
       darkPower: null,
       finale: null,
       isHeroUltimateAbilityRevealed: false,
+      ultimateAbilityNoData: false,
       isHeroWeaponUsed: false,
+      weaponUsedNoData: false,
       signatureCard: null,
       note: '',
       result: false,
@@ -152,8 +156,8 @@ export default function NewEntryPage() {
         hero: values.hero ?? '',
         darkPower: values.darkPower ?? '',
         finale: values.finale ?? '',
-        isHeroUltimateAbilityRevealed: values.isHeroUltimateAbilityRevealed,
-        isHeroWeaponUsed: values.isHeroWeaponUsed,
+        isHeroUltimateAbilityRevealed: values.ultimateAbilityNoData ? null : values.isHeroUltimateAbilityRevealed,
+        isHeroWeaponUsed: values.weaponUsedNoData ? null : values.isHeroWeaponUsed,
         signatureCard: values.signatureCard ?? '',
         note: values.note,
         result: values.result,
@@ -257,16 +261,32 @@ export default function NewEntryPage() {
                 {...form.getInputProps('finale')}
               />
             </SimpleGrid>
-            <Switch
-              label="Ultimate ability revealed"
-              key={form.key('isHeroUltimateAbilityRevealed')}
-              {...form.getInputProps('isHeroUltimateAbilityRevealed', { type: 'checkbox' })}
-            />
-            <Switch
-              label="Hero weapon used"
-              key={form.key('isHeroWeaponUsed')}
-              {...form.getInputProps('isHeroWeaponUsed', { type: 'checkbox' })}
-            />
+            <Group gap="lg" align="center">
+              <Switch
+                label="Ultimate ability revealed"
+                key={form.key('isHeroUltimateAbilityRevealed')}
+                {...form.getInputProps('isHeroUltimateAbilityRevealed', { type: 'checkbox' })}
+                disabled={form.values.ultimateAbilityNoData}
+              />
+              <Checkbox
+                label="No data"
+                key={form.key('ultimateAbilityNoData')}
+                {...form.getInputProps('ultimateAbilityNoData', { type: 'checkbox' })}
+              />
+            </Group>
+            <Group gap="lg" align="center">
+              <Switch
+                label="Hero weapon used"
+                key={form.key('isHeroWeaponUsed')}
+                {...form.getInputProps('isHeroWeaponUsed', { type: 'checkbox' })}
+                disabled={form.values.weaponUsedNoData}
+              />
+              <Checkbox
+                label="No data"
+                key={form.key('weaponUsedNoData')}
+                {...form.getInputProps('weaponUsedNoData', { type: 'checkbox' })}
+              />
+            </Group>
             <Select
               label="Signature card"
               placeholder="Start typing"

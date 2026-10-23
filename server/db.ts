@@ -21,6 +21,7 @@ function getDatabase() {
 function change(mutate: (data: DatabaseData) => void): Promise<void> {
   const run = writeQueue.then(async () => {
     const database = await getDatabase()
+    await database.read()
     await database.update(mutate)
   })
 
@@ -35,6 +36,7 @@ function change(mutate: (data: DatabaseData) => void): Promise<void> {
 export async function listEntries(): Promise<Entry[]> {
   await writeQueue
   const database = await getDatabase()
+  await database.read()
   return database.data.entries
     .map((entry, index) => ({ entry, index }))
     .sort((left, right) => {

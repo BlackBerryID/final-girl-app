@@ -7,8 +7,8 @@ export type Entry = {
   hero?: string
   darkPower?: string
   finale?: string
-  isHeroUltimateAbilityRevealed?: boolean
-  isHeroWeaponUsed?: boolean
+  isHeroUltimateAbilityRevealed?: boolean | null
+  isHeroWeaponUsed?: boolean | null
   signatureCard?: string
   note?: string
   result?: boolean
@@ -22,8 +22,8 @@ export type NewEntry = {
   hero: string
   darkPower: string
   finale: string
-  isHeroUltimateAbilityRevealed: boolean
-  isHeroWeaponUsed: boolean
+  isHeroUltimateAbilityRevealed: boolean | null
+  isHeroWeaponUsed: boolean | null
   signatureCard: string
   note: string
   result: boolean

@@ -27,7 +27,9 @@ html {
 }
 
 .epic-history {
-  color: #8d1c2c;
+  display: inline-block;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid #8d1c2c;
 }
 
 .history-table tbody tr.history-day-gap {

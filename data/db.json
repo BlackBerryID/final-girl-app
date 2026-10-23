@@ -1,32 +1,18 @@
 {
   "entries": [
     {
-      "id": "68f05054-ba2a-4c5a-a5a4-46d834a0028e",
-      "title": "123",
-      "note": "ads",
-      "createdAt": "2026-10-08T11:09:26.101Z"
-    },
-    {
-      "id": "ac5ac29f-1ce4-4720-9f92-d84e0fa87bf5",
-      "title": "213",
-      "note": "всвы",
-      "killer": "The Ratchet Lady",
-      "location": "Wolfe Asylum",
-      "featureFilm": "Madness in the Dark",
-      "createdAt": "2026-10-08T11:43:07.813Z"
-    },
-    {
-      "id": "754b97e4-daf6-4a12-96ea-603c28b257a7",
-      "date": "2026-10-14",
-      "killer": "The Evomorph",
-      "location": "USS Konrad",
-      "featureFilm": "Into the Void",
-      "hero": "Ava",
-      "darkPower": "",
+      "id": "125b5dcc-47cd-4bbc-94b9-904129912083",
+      "date": "2026-06-20",
+      "killer": "Berith",
+      "location": "L'Armes Abbey",
+      "featureFilm": "A Demon in the Shadows",
+      "hero": "Kenzie",
+      "darkPower": "Rejecting God",
       "finale": "",
-      "isHeroUltimateAbilityRevealed": true,
-      "isHeroWeaponUsed": false,
+      "isHeroUltimateAbilityRevealed": false,
+      "isHeroWeaponUsed": null,
       "signatureCard": "",
+      "note": "",
       "result": true
     }
   ]

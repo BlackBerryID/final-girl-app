@@ -39,12 +39,18 @@ function MarkedValue({
   epic: boolean
 }) {
   const text = displayText(value)
-  if (!text) return null
+  if (!text) {
+    return (
+      <Text span aria-label="No">
+        {'\u2796'}
+      </Text>
+    )
+  }
   if (!epic) return text
   return <span className="epic-history">{text}</span>
 }
 
-function FlagMark({ value }: { value: boolean | undefined }) {
+function FlagMark({ value }: { value: boolean | null | undefined }) {
   if (typeof value !== 'boolean') return null
 
   return (
