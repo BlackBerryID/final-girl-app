@@ -1,6 +1,7 @@
 import { Anchor, Box, Group, Stack, Title } from '@mantine/core'
 import { NavLink, Route, Routes } from 'react-router'
 import EntriesPage from './pages/EntriesPage.tsx'
+import KillerStatsPage from './pages/KillerStatsPage.tsx'
 import NewEntryPage from './pages/NewEntryPage.tsx'
 import StatsPage from './pages/StatsPage.tsx'
 
@@ -36,6 +37,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<EntriesPage />} />
               <Route path="/stats" element={<StatsPage />} />
+              <Route path="/stats/killers" element={<KillerStatsPage />} />
               <Route path="/entries/new" element={<NewEntryPage />} />
               <Route path="*" element={<Title order={3} ta="center">Page not found.</Title>} />
             </Routes>
