@@ -10,6 +10,7 @@ export type Entry = {
   isHeroUltimateAbilityRevealed?: boolean
   isHeroWeaponUsed?: boolean
   signatureCard?: string
+  note?: string
   result?: boolean
 }
 
@@ -24,6 +25,7 @@ export type NewEntry = {
   isHeroUltimateAbilityRevealed: boolean
   isHeroWeaponUsed: boolean
   signatureCard: string
+  note: string
   result: boolean
 }
 

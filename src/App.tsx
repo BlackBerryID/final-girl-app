@@ -20,8 +20,8 @@ function AppLink({ to, end, children }: { to: string; end?: boolean; children: s
 
 export default function App() {
   return (
-    <Box mih="100vh" py="xl" px="md">
-      <Stack align="center" gap="xl" w="100%">
+    <Box mih="100svh" py="xl" px="md" w="100%" maw="100%" miw={0}>
+      <Stack align="center" gap="xl" w="100%" maw="100%" miw={0}>
         <Stack align="center" gap="sm">
           <Title order={2}>Final Girl</Title>
           <Group justify="center" gap="lg">
@@ -32,7 +32,7 @@ export default function App() {
             <AppLink to="/entries/new">Add game</AppLink>
           </Group>
         </Stack>
-        <Box component="main" w="100%">
+        <Box component="main" w="100%" miw={0}>
             <Routes>
               <Route path="/" element={<EntriesPage />} />
               <Route path="/stats" element={<StatsPage />} />

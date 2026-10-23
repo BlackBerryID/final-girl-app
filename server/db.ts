@@ -1,12 +1,12 @@
+import { copyFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { JSONFilePreset } from 'lowdb/node'
 import type { DatabaseData, Entry, NewEntry } from '../src/types.ts'
 
-const databaseFile = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '../data/db.json',
-)
+const dataDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../data')
+const databaseFile = path.join(dataDirectory, 'db.json')
+const dumpsDirectory = path.join(dataDirectory, 'dumps')
 
 const defaultData: DatabaseData = { entries: [] }
 
@@ -56,6 +56,21 @@ export async function addEntry(input: NewEntry): Promise<Entry> {
   })
 
   return entry
+}
+
+function dumpStamp(date: Date) {
+  const pad = (value: number) => String(value).padStart(2, '0')
+  const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+  const time = `${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(date.getSeconds())}`
+  return `${day}_${time}`
+}
+
+export async function dumpDatabase(): Promise<string> {
+  await writeQueue
+  await mkdir(dumpsDirectory, { recursive: true })
+  const fileName = `dump_db_${dumpStamp(new Date())}.json`
+  await copyFile(databaseFile, path.join(dumpsDirectory, fileName))
+  return fileName
 }
 
 export async function removeEntry(id: string): Promise<boolean> {

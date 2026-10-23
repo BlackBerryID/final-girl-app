@@ -28,6 +28,17 @@ export async function createEntry(input: NewEntry): Promise<Entry> {
   return response.json() as Promise<Entry>
 }
 
+export async function createDump(): Promise<string> {
+  const response = await fetch('/api/dumps', { method: 'POST' })
+  if (!response.ok) throw new Error(await readError(response, 'Could not create the dump'))
+
+  const body = (await response.json()) as { fileName?: unknown }
+  if (typeof body.fileName !== 'string' || body.fileName.length === 0) {
+    throw new Error('Could not create the dump')
+  }
+  return body.fileName
+}
+
 export async function deleteEntry(id: string): Promise<void> {
   const response = await fetch(`/api/entries/${encodeURIComponent(id)}`, {
     method: 'DELETE',

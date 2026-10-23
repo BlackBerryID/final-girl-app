@@ -1,4 +1,4 @@
-import { Button, Group, Input, Paper, Select, SimpleGrid, Stack, Switch, Text, Title } from '@mantine/core'
+import { Button, Group, Input, Paper, Select, SimpleGrid, Stack, Switch, Text, TextInput, Title } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import { useState } from 'react'
@@ -32,6 +32,7 @@ type EntryFormValues = {
   isHeroUltimateAbilityRevealed: boolean
   isHeroWeaponUsed: boolean
   signatureCard: string | null
+  note: string
   result: boolean
 }
 
@@ -71,6 +72,7 @@ export default function NewEntryPage() {
       isHeroUltimateAbilityRevealed: false,
       isHeroWeaponUsed: false,
       signatureCard: null,
+      note: '',
       result: false,
     },
     validate: {
@@ -78,6 +80,7 @@ export default function NewEntryPage() {
       killer: (value) => (value ? null : 'Choose a killer'),
       location: (value) => (value ? null : 'Choose a location'),
       hero: (value) => (value ? null : 'Choose a hero'),
+      note: (value) => (value.length <= 10 ? null : 'Use at most 10 characters'),
     },
   })
 
@@ -138,6 +141,7 @@ export default function NewEntryPage() {
         isHeroUltimateAbilityRevealed: values.isHeroUltimateAbilityRevealed,
         isHeroWeaponUsed: values.isHeroWeaponUsed,
         signatureCard: values.signatureCard ?? '',
+        note: values.note,
         result: values.result,
       })
       await navigate('/')
@@ -256,6 +260,12 @@ export default function NewEntryPage() {
               nothingFoundMessage="Nothing found"
               key={form.key('signatureCard')}
               {...form.getInputProps('signatureCard')}
+            />
+            <TextInput
+              label="Note"
+              maxLength={10}
+              key={form.key('note')}
+              {...form.getInputProps('note')}
             />
             <Input.Wrapper label="Result">
               <Group gap="sm" wrap="nowrap" mt={4}>

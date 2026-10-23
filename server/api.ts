@@ -9,9 +9,10 @@ import {
 import { KILLERS, LOCATIONS, findFeatureFilmByPair } from '../src/data/featureFilms.ts'
 import { HEROES } from '../src/data/heroes.ts'
 import type { NewEntry } from '../src/types.ts'
-import { addEntry, listEntries, removeEntry } from './db.ts'
+import { addEntry, dumpDatabase, listEntries, removeEntry } from './db.ts'
 
 const entriesPath = '/api/entries'
+const dumpsPath = '/api/dumps'
 
 function sendJson(response: ServerResponse, status: number, body: unknown) {
   response.statusCode = status
@@ -62,6 +63,12 @@ function parseBoolean(value: unknown): boolean | null {
   return typeof value === 'boolean' ? value : null
 }
 
+function parseNote(value: unknown): string | null {
+  if (value === undefined || value === null) return ''
+  if (typeof value !== 'string' || value.length > 10) return null
+  return value
+}
+
 function parseNewEntry(value: unknown): NewEntry | null {
   if (typeof value !== 'object' || value === null) return null
 
@@ -82,6 +89,7 @@ function parseNewEntry(value: unknown): NewEntry | null {
   const darkPower = parseListedOrEmpty(record.darkPower, optionsForKiller(DARK_POWERS_BY_KILLER, record.killer))
   const finale = parseListedOrEmpty(record.finale, optionsForKiller(FINALES_BY_KILLER, record.killer))
   const signatureCard = parseListedOrEmpty(record.signatureCard, SIGNATURE_CARDS)
+  const note = parseNote(record.note)
   const isHeroUltimateAbilityRevealed = parseBoolean(record.isHeroUltimateAbilityRevealed)
   const isHeroWeaponUsed = parseBoolean(record.isHeroWeaponUsed)
   const result = parseBoolean(record.result)
@@ -89,6 +97,7 @@ function parseNewEntry(value: unknown): NewEntry | null {
     darkPower === null ||
     finale === null ||
     signatureCard === null ||
+    note === null ||
     isHeroUltimateAbilityRevealed === null ||
     isHeroWeaponUsed === null ||
     result === null
@@ -107,6 +116,7 @@ function parseNewEntry(value: unknown): NewEntry | null {
     isHeroUltimateAbilityRevealed,
     isHeroWeaponUsed,
     signatureCard,
+    note,
     result,
   }
 }
@@ -141,6 +151,17 @@ async function handleApi(
 
     response.statusCode = 204
     response.end()
+    return true
+  }
+
+  if (pathname === dumpsPath) {
+    if (request.method !== 'POST') {
+      response.setHeader('Allow', 'POST')
+      sendJson(response, 405, { error: 'Method not allowed' })
+      return true
+    }
+
+    sendJson(response, 201, { fileName: await dumpDatabase() })
     return true
   }
 

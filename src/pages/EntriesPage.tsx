@@ -14,11 +14,11 @@ import {
 } from '@mantine/core'
 import { Fragment, useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { deleteEntry, fetchEntries } from '../api.ts'
+import { createDump, deleteEntry, fetchEntries } from '../api.ts'
 import { featureFilmImage, heroImage, killerImage, locationImage } from '../data/portraits.ts'
 import type { Entry } from '../types.ts'
 
-const COLUMN_COUNT = 12
+const COLUMN_COUNT = 13
 
 function displayDate(value: string | undefined) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value ?? '')
@@ -107,6 +107,9 @@ export default function EntriesPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [dumping, setDumping] = useState(false)
+  const [dumpMessage, setDumpMessage] = useState<string | null>(null)
+  const [dumpError, setDumpError] = useState<string | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -125,6 +128,21 @@ export default function EntriesPage() {
 
     return () => controller.abort()
   }, [])
+
+  async function handleDump() {
+    setDumping(true)
+    setDumpError(null)
+    setDumpMessage(null)
+
+    try {
+      const fileName = await createDump()
+      setDumpMessage(`Saved data/dumps/${fileName}`)
+    } catch (reason: unknown) {
+      setDumpError(reason instanceof Error ? reason.message : 'Could not create the dump')
+    } finally {
+      setDumping(false)
+    }
+  }
 
   function closeDelete() {
     if (deleting) return
@@ -151,10 +169,32 @@ export default function EntriesPage() {
   return (
     <>
       <Box className="history-layout" miw={0}>
-          <Stack align="center" gap="md">
-            <Title order={1} ta="center">
-              History
-            </Title>
+          <Stack align="center" gap="md" w="100%" miw={0}>
+            <Box pos="relative" w="100%">
+              <Title order={1} ta="center">
+                History
+              </Title>
+              <Button
+                pos="absolute"
+                top={0}
+                right={0}
+                variant="default"
+                loading={dumping}
+                onClick={() => void handleDump()}
+              >
+                Dump
+              </Button>
+            </Box>
+            {dumpMessage ? (
+              <Text size="sm" c="dimmed" ta="right" w="100%">
+                {dumpMessage}
+              </Text>
+            ) : null}
+            {dumpError ? (
+              <Alert color="red" w="100%">
+                {dumpError}
+              </Alert>
+            ) : null}
             {loading ? <Loader /> : null}
             {error ? (
               <Alert color="red" w="100%">
@@ -167,7 +207,7 @@ export default function EntriesPage() {
               </Text>
             ) : null}
             {entries.length > 0 ? (
-              <Table.ScrollContainer minWidth={1480} w="100%">
+              <Table.ScrollContainer minWidth={1480} w="100%" miw={0} maw="100%" type="native">
                 <Table
                   striped
                   withTableBorder
@@ -187,6 +227,7 @@ export default function EntriesPage() {
                       <Table.Th ta="center">Ultimate ability</Table.Th>
                       <Table.Th ta="center">Weapon used</Table.Th>
                       <Table.Th>Signature card</Table.Th>
+                      <Table.Th>Note</Table.Th>
                       <Table.Th>Result</Table.Th>
                       <Table.Th>
                         <span className="sr-only">Delete</span>
@@ -243,6 +284,7 @@ export default function EntriesPage() {
                               <FlagMark value={entry.isHeroWeaponUsed} />
                             </Table.Td>
                             <Table.Td>{displayText(entry.signatureCard)}</Table.Td>
+                            <Table.Td>{displayText(entry.note)}</Table.Td>
                             <Table.Td>
                               <ResultText value={entry.result} />
                             </Table.Td>

@@ -4,10 +4,22 @@
 @import '@mantine/core/styles.layer.css';
 @import '@mantine/dates/styles.layer.css';
 
+html {
+  overflow-x: clip;
+  overflow-y: auto;
+}
+
 .history-layout,
 .stats-layout {
-  width: min(100%, max(75rem, 83.333vw));
+  width: 100%;
+  max-width: min(100%, max(75rem, 83.333%));
+  min-width: 0;
   margin-inline: auto;
+}
+
+.history-table th,
+.history-table td {
+  white-space: nowrap;
 }
 
 .history-table tbody tr.history-day-gap {
